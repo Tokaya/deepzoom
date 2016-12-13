@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
+    <style type="text/css">
+        li {
+            list-style-type: none;
+            margin: 0.4em 0;
+        }
+        li.none {
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="row">
+        <div class="col-lg-12">
+            <h1>病理库</h1>
+        </div>
+        <form id="upload-form" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+
+            <strong>病理图片:</strong><br>
+            <input class="btn btn-primary" id="file-picker" type="file" name="file" accept="image/*" multiple>
+            <div id="msg"></div>
+            <input class="btn btn-default" type="submit" value="上传文件" id="upload-button">
+        </form>
+
+        <ul>
+            {% for entry in root_dir.children recursive %}
+            <li>
+                {% if entry.url_path %}
+                <a href="{{ url_for('slide', path=entry.url_path) }}">
+                    {{ entry.name }}
+                </a>
+                {% else %}
+                {{ entry.name }}
+                {% endif %}
+
+                {% if entry.children %}
+                <ul>
+                    {{ loop(entry.children) }}
+                </ul>
+                {% endif %}
+            </li>
+            {% else %}
+            <li class="none">None</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+</body>
+<script>
+
+    $("#file-picker").change(function(){
+
+        var input = document.getElementById('file-picker');
+
+        for (var i=0; i<input.files.length; i++)
+        {
+        //koala.jpg, koala.JPG substring(index) lastIndexOf('a') koala.1.jpg
+            var ext= input.files[i].name.substring(input.files[i].name.lastIndexOf('.')+1).toLowerCase()
+
+            if ((ext == 'tiff') || (ext == 'svs'))
+            {
+                $("#msg").text("支持上传文件")
+            }
+            else
+            {
+                $("#msg").text("不支持上传文件")
+                document.getElementById("file-picker").value ="";
+            }
+
+        }
+
+
+    } );
+
+
+</script>
+</html>
