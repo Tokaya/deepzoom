@@ -24,7 +24,7 @@
         <form id="upload-form" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
 
             <strong>病理图片:</strong><br>
-            <input class="btn btn-primary" id="file-picker" type="file" name="file" accept="image/*" multiple>
+            <input class="btn btn-primary" id="file-picker" type="file" name="file" multiple>
             <div id="msg"></div>
             <input class="btn btn-default" type="submit" value="上传文件" id="upload-button">
         </form>
