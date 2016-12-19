@@ -28,6 +28,7 @@ import os
 from optparse import OptionParser
 from threading import Lock
 import pymongo
+from  werkzeug.security import check_password_hash
 
 SLIDE_DIR = "D:\openslide\kin\images"
 SLIDE_CACHE_SIZE = 10
@@ -45,6 +46,8 @@ URI = 'mongodb://127.0.0.1:27017'
 client = pymongo.MongoClient(URI)
 DB = client['deepzoom']
 images = DB.images
+users = DB.users
+
 
 
 class PILBytesIO(BytesIO):
@@ -104,6 +107,18 @@ class _SlideFile(object):
     def __init__(self, relpath):
         self.name = os.path.basename(relpath)
         self.url_path = relpath
+
+
+class User():
+    def __init__(self, username):
+        self.username = username
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
 
 
 @app.before_first_request

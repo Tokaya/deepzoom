@@ -16,40 +16,41 @@
 </head>
 <body>
 <div class="container">
-
     <div class="row">
-        <div class="col-lg-12">
+        <div class="">
             <h1>病理库</h1>
         </div>
-        <form id="upload-form" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+        <div class="col-lg">
+            <form id="upload-form" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="file-picker">上传文件</label>
+                    <input id="file-picker" type="file" name="file" multiple>
+                </div>
+                <div id="msg"></div>
+                <button class="btn btn-default" type="submit" id="upload-button">上传</button>
+            </form>
+            <ul class="list-unstyled">
+                {% for entry in root_dir.children recursive %}
+                <li>
+                    {% if entry.url_path %}
+                    <a href="{{ url_for('slide', path=entry.url_path) }}">
+                        {{ entry.name }}
+                    </a>
+                    {% else %}
+                        {{ entry.name }}
+                    {% endif %}
 
-            <strong>病理图片:</strong><br>
-            <input class="btn btn-primary" id="file-picker" type="file" name="file" multiple>
-            <div id="msg"></div>
-            <input class="btn btn-default" type="submit" value="上传文件" id="upload-button">
-        </form>
-
-        <ul>
-            {% for entry in root_dir.children recursive %}
-            <li>
-                {% if entry.url_path %}
-                <a href="{{ url_for('slide', path=entry.url_path) }}">
-                    {{ entry.name }}
-                </a>
+                    {% if entry.children %}
+                    <ul>
+                        {{ loop(entry.children) }}
+                    </ul>
+                    {% endif %}
+                </li>
                 {% else %}
-                {{ entry.name }}
-                {% endif %}
-
-                {% if entry.children %}
-                <ul>
-                    {{ loop(entry.children) }}
-                </ul>
-                {% endif %}
-            </li>
-            {% else %}
-            <li class="none">None</li>
-            {% endfor %}
-        </ul>
+                <li class="none">None</li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 </div>
 </body>
