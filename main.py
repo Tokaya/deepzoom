@@ -19,7 +19,7 @@
 #
 
 from collections import OrderedDict
-from flask import Flask, abort, make_response, render_template, url_for, request, send_from_directory
+from flask import Flask, abort, make_response, render_template, url_for, request, send_from_directory, redirect
 from io import BytesIO
 import openslide
 from openslide import OpenSlide, OpenSlideError
@@ -172,7 +172,7 @@ def upload():
         print("save it to:", destination)
         file.save(destination)
 
-    return render_template("complete.html", image_name=filename)
+    return redirect(url_for('.index'))
 
 
 @app.route('/upload/<filename>')
@@ -264,4 +264,4 @@ if __name__ == '__main__':
     except IndexError:
         pass
 
-    app.run(host=opts.host, port=opts.port, threaded=True)
+    app.run(host=opts.host, port=opts.port, threaded=True, debug=True)
