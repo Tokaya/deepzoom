@@ -1,64 +1,93 @@
-<!doctype html>
-<meta charset="utf-8">
-<title>{{ slide_filename }}</title>
-
-<style type="text/css">
-html {
-    overflow: hidden;
-}
-body {
-    margin: 0;
-    padding: 0;
-}
-div#view {
-    position: absolute;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: white;
-    color: white;
-}
-</style>
-
+{% extends "base.html" %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+  html {
+      /*overflow: hidden;*/
+  }
+  body {
+      margin:auto;
+      padding: auto;
+      background-color: rgb(245, 245, 245);
+  }
+  .msg {
+      margin: 630px auto 30px;
+      padding: 20px;
+      background-color: rgb(255, 255, 255);
+  }
+  div#view {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 60%;
+      background-color: white;
+      color: white;
+  }
+  </style>
+{% endblock %}
+{% block title %}{{ slide_filename }}{% endblock %}
+{% block content %}
 <div id="view"></div>
-
-<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/openseadragon.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/openseadragon-scalebar.js') }}"></script>
-<script type="text/javascript">
-$(document).ready(function() {
-    var viewer = new OpenSeadragon({
-        id: "view",
-        tileSources: "{{ slide_url }}",
-        prefixUrl: "{{ url_for('static', filename='images/') }}",
-        showNavigator: true,
-        showRotationControl: true,
-        animationTime: 0.5,
-        blendTime: 0.1,
-        constrainDuringPan: true,
-        maxZoomPixelRatio: 2,
-        minZoomLevel: 1,
-        visibilityRatio: 1,
-        zoomPerScroll: 2,
-        timeout: 120000,
-    });
-    viewer.addHandler("open", function() {
-        // To improve load times, ignore the lowest-resolution Deep Zoom
-        // levels.  This is a hack: we can't configure the minLevel via
-        // OpenSeadragon configuration options when the viewer is created
-        // from DZI XML.
-        viewer.source.minLevel = 8;
-    });
-
-    var mpp = parseFloat("{{ slide_mpp }}");
-    viewer.scalebar({
-        pixelsPerMeter: mpp ? (1e6 / mpp) : 0,
-        xOffset: 10,
-        yOffset: 10,
-        barThickness: 3,
-        color: '#555555',
-        fontColor: '#333333',
-        backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    });
-});
-</script>
+<div class="msg container">
+    <h4>xx癌细胞病理图</h4>
+    <div class="row">
+    <form class="col s6">
+      <div class="row">
+        <div class="input-field col s12">
+            <i class="material-icons prefix">account_circle</i>
+            <input id="password" type="text" class="validate" length="10">
+            <label for="password">记录医生</label>
+        </div>
+        <div class="input-field col s12">
+          <i class="material-icons prefix">mode_edit</i>
+          <textarea id="icon_prefix2" class="materialize-textarea" length="100"></textarea>
+          <label for="icon_prefix2">病理记录</label>
+        </div>
+      </div>
+    </form>
+    </div>
+    <div class="section">
+      <h5>Section 2</h5>
+      <p>Stuff</p>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+    {{ super() }}
+        <script type="text/javascript">
+            $(document).ready(function() {
+                var viewer = new OpenSeadragon({
+                    id: "view",
+                    tileSources: "{{ slide_url }}",
+                    prefixUrl: "{{ url_for('static', filename='images/') }}",
+                    showNavigator: true,
+                    showRotationControl: true,
+                    animationTime: 0.5,
+                    blendTime: 0.1,
+                    constrainDuringPan: true,
+                    maxZoomPixelRatio: 2,
+                    minZoomLevel: 1,
+                    visibilityRatio: 1,
+                    zoomPerScroll: 2,
+                    timeout: 120000,
+                });
+                viewer.addHandler("open", function() {
+                    // To improve load times, ignore the lowest-resolution Deep Zoom
+                    // levels.  This is a hack: we can't configure the minLevel via
+                    // OpenSeadragon configuration options when the viewer is created
+                    // from DZI XML.
+                    viewer.source.minLevel = 8;
+                });
+                var mpp = parseFloat("{{ slide_mpp }}");
+                viewer.scalebar({
+                    pixelsPerMeter: mpp ? (1e6 / mpp) : 0,
+                    xOffset: 10,
+                    yOffset: 10,
+                    barThickness: 3,
+                    color: '#555555',
+                    fontColor: '#333333',
+                    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                });
+            });
+        </script>
+{% endblock %}
