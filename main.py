@@ -30,7 +30,7 @@ from threading import Lock
 import pymongo
 from  werkzeug.security import check_password_hash
 
-SLIDE_DIR = "D:\openslide\kin\images"
+SLIDE_DIR = "/root/web/images"
 SLIDE_CACHE_SIZE = 10
 DEEPZOOM_FORMAT = 'jpeg'
 DEEPZOOM_TILE_SIZE = 254
@@ -47,7 +47,6 @@ client = pymongo.MongoClient(URI)
 DB = client['deepzoom']
 images = DB.images
 users = DB.users
-
 
 
 class PILBytesIO(BytesIO):
@@ -120,7 +119,6 @@ class User():
         return True
 
 
-
 @app.before_first_request
 def _setup():
     app.basedir = os.path.abspath(app.config['SLIDE_DIR'])
@@ -149,11 +147,25 @@ def _get_slide(path):
 
 
 @app.route('/')
+def home():
+    return render_template('home.html')
+
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
+
+
+@app.route('/project')
 def index():
     return render_template('upload.html', root_dir=_Directory(app.basedir))
 
 
-@app.route("/upload", methods=['POST'])
+@app.route("/project/upload", methods=['POST'])
 def upload():
     target = os.path.join(APP_ROOT, 'images/')
     print(target)
@@ -175,7 +187,7 @@ def upload():
     return redirect(url_for('.index'))
 
 
-@app.route('/upload/<filename>')
+@app.route('/project/upload/<filename>')
 def send_image(filename):
     image = images.find_one({"filename": filename})
     head, tail = os.path.split(image["filename"])
@@ -185,7 +197,7 @@ def send_image(filename):
     return send_from_directory(head, filename)
 
 
-@app.route('/<path:path>')
+@app.route('/project/<path:path>')
 def slide(path):
     slide = _get_slide(path)
     slide_url = url_for('dzi', path=path)
@@ -193,7 +205,7 @@ def slide(path):
                            slide_filename=slide.filename, slide_mpp=slide.mpp)
 
 
-@app.route('/<path:path>.dzi')
+@app.route('/project/<path:path>.dzi')
 def dzi(path):
     slide = _get_slide(path)
     format = app.config['DEEPZOOM_FORMAT']
@@ -202,7 +214,7 @@ def dzi(path):
     return resp
 
 
-@app.route('/<path:path>_files/<int:level>/<int:col>_<int:row>.<format>')
+@app.route('/project/<path:path>_files/<int:level>/<int:col>_<int:row>.<format>')
 def tile(path, level, col, row, format):
     slide = _get_slide(path)
     format = format.lower()
@@ -237,11 +249,11 @@ if __name__ == '__main__':
                       dest='DEEPZOOM_FORMAT',
                       help='image format for tiles [jpeg]')
     parser.add_option('-l', '--listen', metavar='ADDRESS', dest='host',
-                      default='127.0.0.1',
-                      help='address to listen on [127.0.0.1]')
+                      default='0.0.0.0',
+                      help='address to listen on [0.0.0.0]')
     parser.add_option('-p', '--port', metavar='PORT', dest='port',
-                      type='int', default=5000,
-                      help='port to listen on [5000]')
+                      type='int', default=8000,
+                      help='port to listen on [8000]')
     parser.add_option('-Q', '--quality', metavar='QUALITY',
                       dest='DEEPZOOM_TILE_QUALITY', type='int',
                       help='JPEG compression quality [75]')
