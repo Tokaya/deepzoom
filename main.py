@@ -155,17 +155,18 @@ def home():
 def about():
     return render_template('about.html')
 
+
 @app.route('/contact')
 def contact():
     return render_template('contact.html')
 
 
-@app.route('/project')
+@app.route('/solutions')
 def index():
     return render_template('upload.html', root_dir=_Directory(app.basedir))
 
 
-@app.route("/project/upload", methods=['POST'])
+@app.route("/solutions/upload", methods=['POST'])
 def upload():
     target = os.path.join(APP_ROOT, 'images/')
     print(target)
@@ -187,7 +188,7 @@ def upload():
     return redirect(url_for('.index'))
 
 
-@app.route('/project/upload/<filename>')
+@app.route('/solutions/upload/<filename>')
 def send_image(filename):
     image = images.find_one({"filename": filename})
     head, tail = os.path.split(image["filename"])
@@ -197,7 +198,7 @@ def send_image(filename):
     return send_from_directory(head, filename)
 
 
-@app.route('/project/<path:path>')
+@app.route('/solutions/<path:path>')
 def slide(path):
     slide = _get_slide(path)
     slide_url = url_for('dzi', path=path)
@@ -205,7 +206,7 @@ def slide(path):
                            slide_filename=slide.filename, slide_mpp=slide.mpp)
 
 
-@app.route('/project/<path:path>.dzi')
+@app.route('/solutions/<path:path>.dzi')
 def dzi(path):
     slide = _get_slide(path)
     format = app.config['DEEPZOOM_FORMAT']
@@ -214,7 +215,7 @@ def dzi(path):
     return resp
 
 
-@app.route('/project/<path:path>_files/<int:level>/<int:col>_<int:row>.<format>')
+@app.route('/solutions/<path:path>_files/<int:level>/<int:col>_<int:row>.<format>')
 def tile(path, level, col, row, format):
     slide = _get_slide(path)
     format = format.lower()
